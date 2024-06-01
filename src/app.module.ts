@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { FriendshipModule } from './friendship/friendship.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { StoryModule } from './story/story.module';
 
 console.log(`.env.${process.env.NODE_ENV}`);
 
@@ -46,6 +47,7 @@ console.log(`.env.${process.env.NODE_ENV}`);
     FriendshipModule,
     TimeTableModule,
     ScheduleModule,
+    StoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
