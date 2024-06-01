@@ -16,22 +16,22 @@ export class StoryEntity extends CommonEntity {
   @Column({ nullable: false })
   userId: number;
 
-  @Column('timestamp')
+  @Column('timestamp', { nullable: false })
   storyDate: Date;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: false })
   place: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: false })
   address: string;
 
-  @Column('varchar')
+  @Column('varchar', { nullable: false })
   imgDir: string;
 
   @Column('tinyint', { default: false })
   isPin: boolean;
 
-  @Column('tinyint')
+  @Column('tinyint', { nullable: false })
   isPublic: boolean;
 
   @JoinColumn({ name: 'userId' })
