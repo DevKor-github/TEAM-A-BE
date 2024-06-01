@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -20,6 +21,7 @@ import {
 } from './dto/create-story.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetStoryResponseDto } from './dto/get-story.dto';
+import { DeleteStoryResponseDto } from './dto/delete-story.dto';
 
 @Controller('story')
 export class StoryController {
@@ -55,5 +57,14 @@ export class StoryController {
     @Param('storyId') storyId: number,
   ): Promise<GetStoryResponseDto> {
     return await this.storyService.toggleStoryPin(user.id, storyId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('/:storyId')
+  async deleteStory(
+    @User() user: AuthorizedUserDto,
+    @Param('storyId') storyId: number,
+  ): Promise<DeleteStoryResponseDto> {
+    return await this.storyService.deleteStory(user.id, storyId);
   }
 }

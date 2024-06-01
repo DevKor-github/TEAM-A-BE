@@ -6,6 +6,7 @@ import {
 } from './dto/create-story.dto';
 import { FileService } from 'src/common/file.service';
 import { GetStoryResponseDto } from './dto/get-story.dto';
+import { DeleteStoryResponseDto } from './dto/delete-story.dto';
 
 @Injectable()
 export class StoryService {
@@ -69,5 +70,17 @@ export class StoryService {
     };
 
     return result;
+  }
+
+  async deleteStory(
+    userId: number,
+    storyId: number,
+  ): Promise<DeleteStoryResponseDto> {
+    const isDeleted = await this.storyRepository.deleteStory(userId, storyId);
+    if (!isDeleted) {
+      throw new NotImplementedException('Delete story failed!');
+    }
+
+    return new DeleteStoryResponseDto(true);
   }
 }

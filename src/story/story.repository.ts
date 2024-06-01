@@ -41,4 +41,12 @@ export class StoryRepository extends Repository<StoryEntity> {
     const result = await this.save(toggledStory);
     return result;
   }
+
+  async deleteStory(userId: number, storyId: number): Promise<boolean> {
+    const deleteResult = await this.softDelete({
+      id: storyId,
+      userId: userId,
+    });
+    return deleteResult.affected ? true : false;
+  }
 }
