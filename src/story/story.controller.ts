@@ -27,12 +27,12 @@ export class StoryController {
   async createStory(
     @User() user: AuthorizedUserDto,
     @Body() body: CreateStoryRequestDto,
-    @UploadedFile() story: Express.Multer.File,
+    @UploadedFile() storyImg: Express.Multer.File,
   ): Promise<CreateStoryResponseDto> {
-    if (!story) {
+    if (!storyImg) {
       throw new BadRequestException('Story image should be uploaded!');
     }
 
-    return await this.storyService.createStory(user.id, body);
+    return await this.storyService.createStory(user.id, body, storyImg);
   }
 }

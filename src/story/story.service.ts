@@ -4,17 +4,25 @@ import {
   CreateStoryRequestDto,
   CreateStoryResponseDto,
 } from './dto/create-story.dto';
+import { FileService } from 'src/common/file.service';
 
 @Injectable()
 export class StoryService {
-  constructor(private readonly storyRepository: StoryRepository) {}
+  constructor(
+    private readonly storyRepository: StoryRepository,
+    private readonly fileService: FileService,
+  ) {}
 
   async createStory(
     userId: number,
     createStoryDto: CreateStoryRequestDto,
+    storyImg: Express.Multer.File,
   ): Promise<CreateStoryResponseDto> {
-    //파일 저장 코드 필요
-    const imgDir = '/';
+    const imgDir = await this.fileService.uploadFile(
+      storyImg,
+      'Story',
+      'cardImage',
+    );
 
     const story = await this.storyRepository.createStory({
       ...createStoryDto,
