@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
   UploadedFile,
   UseGuards,
@@ -16,6 +17,7 @@ import {
   CreateStoryResponseDto,
 } from './dto/create-story.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { GetStoryResponseDto } from './dto/get-story.dto';
 
 @Controller('story')
 export class StoryController {
@@ -34,5 +36,13 @@ export class StoryController {
     }
 
     return await this.storyService.createStory(user.id, body, storyImg);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get()
+  async getStories(
+    @User() user: AuthorizedUserDto,
+  ): Promise<GetStoryResponseDto[]> {
+    return await this.storyService.getStories(user.id);
   }
 }

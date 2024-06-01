@@ -13,4 +13,12 @@ export class StoryRepository extends Repository<StoryEntity> {
     const story = this.create(createStoryDto);
     return await this.save(story);
   }
+
+  async getStories(userId: number): Promise<StoryEntity[]> {
+    const stories = await this.find({
+      where: { userId: userId },
+    });
+
+    return stories;
+  }
 }
