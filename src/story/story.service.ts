@@ -55,4 +55,19 @@ export class StoryService {
 
     return results;
   }
+
+  async toggleStoryPin(
+    userId: number,
+    storyId: number,
+  ): Promise<GetStoryResponseDto> {
+    const story = await this.storyRepository.toggleStoryPin(userId, storyId);
+    const result = {
+      id: story.id,
+      storyDate: story.storyDate,
+      imgDir: 'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
+      isPin: story.isPin,
+    };
+
+    return result;
+  }
 }

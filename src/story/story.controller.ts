@@ -3,6 +3,8 @@ import {
   Body,
   Controller,
   Get,
+  Param,
+  Patch,
   Post,
   UploadedFile,
   UseGuards,
@@ -44,5 +46,14 @@ export class StoryController {
     @User() user: AuthorizedUserDto,
   ): Promise<GetStoryResponseDto[]> {
     return await this.storyService.getStories(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:storyId')
+  async toggleStoryPin(
+    @User() user: AuthorizedUserDto,
+    @Param('storyId') storyId: number,
+  ): Promise<GetStoryResponseDto> {
+    return await this.storyService.toggleStoryPin(user.id, storyId);
   }
 }

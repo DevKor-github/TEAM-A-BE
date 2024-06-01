@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { StoryEntity } from 'src/entities/story.entity';
 import { DataSource, Repository } from 'typeorm';
 import { CreateStoryDto } from './dto/create-story.dto';
@@ -20,5 +20,25 @@ export class StoryRepository extends Repository<StoryEntity> {
     });
 
     return stories;
+  }
+
+  async toggleStoryPin(userId: number, storyId: number): Promise<StoryEntity> {
+    const story = await this.findOne({
+      where: {
+        id: storyId,
+        userId: userId,
+      },
+    });
+    if (!story) {
+      throw new BadRequestException('Cannot find story!');
+    }
+
+    const toggledStory = {
+      ...story,
+      isPin: !story.isPin,
+    };
+
+    const result = await this.save(toggledStory);
+    return result;
   }
 }
