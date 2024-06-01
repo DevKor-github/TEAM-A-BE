@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Param,
+  Patch,
   Post,
   Res,
   UploadedFile,
@@ -31,6 +32,11 @@ import { checkPossibleResponseDto } from 'src/user/dto/check-possible-response.d
 import { Response } from 'express';
 import { SignUpResponseDto } from './dto/sign-up-response.dto';
 import { UserService } from 'src/user/user.service';
+import { LogoutResponseDto } from './dto/logout-response.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LoginRequestDto } from './dto/login-request.dto';
+import { ChangePasswordRequestDto } from './dto/change-password-request.dto';
+import { ChangePasswordResponseDto } from './dto/change-password-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -41,9 +47,13 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async logIn(@User() user: AuthorizedUserDto): Promise<LoginResponseDto> {
+  async logIn(
+    @User() user: AuthorizedUserDto,
+    @Body() body: LoginRequestDto,
+  ): Promise<LoginResponseDto> {
     console.log('user : ', user);
-    return await this.authService.logIn(user);
+    const keepingLogin = body.keepingLogin;
+    return await this.authService.logIn(user, keepingLogin);
   }
 
   @UseGuards(RefreshAuthGuard)
@@ -51,6 +61,12 @@ export class AuthController {
   refreshToken(@User() user: AuthorizedUserDto): AccessTokenDto {
     console.log('user : ', user);
     return this.authService.refreshToken(user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('logout')
+  async logOut(@User() user: AuthorizedUserDto): Promise<LogoutResponseDto> {
+    return await this.authService.logout(user);
   }
 
   @Post('request-email-verification')
@@ -131,5 +147,14 @@ export class AuthController {
     const code = responseDto.possible ? 200 : 403;
     res.status(code);
     return responseDto;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('password')
+  async updatePassword(
+    @User() user: AuthorizedUserDto,
+    @Body() body: ChangePasswordRequestDto,
+  ): Promise<ChangePasswordResponseDto> {
+    return await this.authService.updatePassword(user.id, body.newPassword);
   }
 }

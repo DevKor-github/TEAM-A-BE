@@ -77,4 +77,13 @@ export class UserRepository extends Repository<UserEntity> {
 
     return updateResult.affected ? true : false;
   }
+
+  async updatePassword(id: number, newPassword: string): Promise<boolean> {
+    const updateResult = await this.update(
+      { id: id },
+      { password: newPassword },
+    );
+
+    return updateResult.affected ? true : false;
+  }
 }

@@ -27,6 +27,8 @@ import { FileService } from 'src/common/file.service';
 import { UserService } from 'src/user/user.service';
 import { checkPossibleResponseDto } from 'src/user/dto/check-possible-response.dto';
 import { SignUpRequestDto } from './dto/sign-up-request.dto';
+import { LogoutResponseDto } from './dto/logout-response.dto';
+import { ChangePasswordResponseDto } from './dto/change-password-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -60,17 +62,20 @@ export class AuthService {
     return new AuthorizedUserDto(user.id, user.username);
   }
 
-  async createToken(user: AuthorizedUserDto): Promise<JwtTokenDto> {
+  async createToken(
+    user: AuthorizedUserDto,
+    keepingLogin: boolean,
+  ): Promise<JwtTokenDto> {
     const id = user.id;
     const tokenDto = new JwtTokenDto(
       this.createAccessToken(user),
-      this.createRefreshToken(id),
+      this.createRefreshToken(id, keepingLogin),
     );
-    const isset = await this.userService.setCurrentRefresthToken(
-      tokenDto.refreshToken,
+    const isSet = await this.userService.setCurrentRefresthToken(
       id,
+      tokenDto.refreshToken,
     );
-    if (!isset) {
+    if (!isSet) {
       throw new NotImplementedException('update refresh token failed!');
     }
     return tokenDto;
@@ -82,15 +87,16 @@ export class AuthService {
       username: user.username,
     };
     return this.jwtService.sign(payload, {
-      expiresIn: '30m',
+      expiresIn: '5m',
     });
   }
 
-  createRefreshToken(id: number): string {
+  createRefreshToken(id: number, keepingLogin: boolean): string {
+    const expiresIn = keepingLogin ? '30d' : '1w';
     return this.jwtService.sign(
       { id },
       {
-        expiresIn: '2w',
+        expiresIn: expiresIn,
       },
     );
   }
@@ -100,6 +106,13 @@ export class AuthService {
     id: number,
   ): Promise<AuthorizedUserDto> {
     const user = await this.userService.findUserById(id);
+
+    if (user.refreshToken === null) {
+      throw new BadRequestException(
+        "There's no refresh token! Please login first",
+      );
+    }
+
     const isMatches = await compare(refreshToken, user.refreshToken);
 
     if (!isMatches) {
@@ -109,10 +122,21 @@ export class AuthService {
     return new AuthorizedUserDto(user.id, user.username);
   }
 
-  async logIn(user: AuthorizedUserDto): Promise<LoginResponseDto> {
+  async logIn(
+    user: AuthorizedUserDto,
+    keepingLogin: boolean,
+  ): Promise<LoginResponseDto> {
     const verified = await this.userService.checkUserVerified(user.id);
-    const token = await this.createToken(user);
+    const token = await this.createToken(user, keepingLogin);
     return new LoginResponseDto(token, verified);
+  }
+
+  async logout(user: AuthorizedUserDto) {
+    const result = await this.userService.setCurrentRefresthToken(
+      user.id,
+      null,
+    );
+    return new LogoutResponseDto(result);
   }
 
   refreshToken(user: AuthorizedUserDto): AccessTokenDto {
@@ -173,6 +197,12 @@ export class AuthService {
     screenshot: Express.Multer.File,
     requestDto: SignUpRequestDto,
   ): Promise<SignUpResponseDto> {
+    const splitedFileNames = screenshot.originalname.split('.');
+    const extension = splitedFileNames.at(splitedFileNames.length - 1);
+    if (!this.imagefilter(extension)) {
+      throw new BadRequestException('Only image file can be uploaded!');
+    }
+
     //유저생성
     const user = await this.userService.createUser({
       email: requestDto.email,
@@ -257,5 +287,25 @@ export class AuthService {
       await this.kuVerificationRepository.findRequestById(requestId);
     await this.userService.deleteUser(request.user.id);
     await this.fileService.deleteFile(request.imgDir);
+  }
+
+  imagefilter(extension: string): boolean {
+    const validExtensions = ['jpg', 'jpeg', 'png'];
+    return validExtensions.includes(extension);
+  }
+
+  async updatePassword(
+    userId: number,
+    newPassword: string,
+  ): Promise<ChangePasswordResponseDto> {
+    const updateResult = await this.userService.updatePassword(
+      userId,
+      newPassword,
+    );
+    if (!updateResult) {
+      throw new NotImplementedException('Change password failed!');
+    }
+
+    return new ChangePasswordResponseDto(updateResult);
   }
 }
