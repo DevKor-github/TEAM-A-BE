@@ -41,7 +41,13 @@ export class StoryService {
   async getStories(userId: number): Promise<GetStoryResponseDto[]> {
     const stories = await this.storyRepository.getStories(userId);
     const results = stories
-      .sort((a, b) => b.storyDate.getTime() - a.storyDate.getTime())
+      .sort((a, b) => {
+        const diff = b.storyDate.getTime() - a.storyDate.getTime();
+        if (diff === 0) {
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        }
+        return diff;
+      })
       .map((story) => {
         const result = {
           id: story.id,
