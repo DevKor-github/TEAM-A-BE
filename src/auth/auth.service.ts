@@ -23,7 +23,7 @@ import { SignUpResponseDto } from './dto/sign-up-response.dto';
 import { ConfigService } from '@nestjs/config';
 import { VerifyScreenshotResponseDto } from './dto/verify-screenshot-response.dto';
 import { GetScreenshotVerificationsResponseDto } from './dto/get-screenshot-verifications-request.dto';
-import { FileService } from './file.service';
+import { FileService } from 'src/common/file.service';
 import { UserService } from 'src/user/user.service';
 import { checkPossibleResponseDto } from 'src/user/dto/check-possible-response.dto';
 import { SignUpRequestDto } from './dto/sign-up-request.dto';
