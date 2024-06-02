@@ -1,4 +1,8 @@
-import { Injectable, NotImplementedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotImplementedException,
+} from '@nestjs/common';
 import { StoryRepository } from './story.repository';
 import {
   CreateStoryRequestDto,
@@ -20,6 +24,24 @@ export class StoryService {
     createStoryDto: CreateStoryRequestDto,
     storyImg: Express.Multer.File,
   ): Promise<CreateStoryResponseDto> {
+    const today = new Date();
+    today.setHours(today.getHours() + 9); //UTC -> 서울 시간
+
+    const todayStories = (await this.storyRepository.getStories(userId)).filter(
+      (story) => {
+        const storyDate = story.createdAt;
+        return (
+          storyDate.getFullYear() === today.getFullYear() &&
+          storyDate.getMonth() === today.getMonth() &&
+          storyDate.getDate() === today.getDate()
+        );
+      },
+    );
+
+    if (todayStories.length >= 3) {
+      throw new BadRequestException('Already 3 stories uploaded today!');
+    }
+
     const imgDir = await this.fileService.uploadFile(
       storyImg,
       'Story',
