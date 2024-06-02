@@ -16,9 +16,6 @@ export class StoryEntity extends CommonEntity {
   @Column({ nullable: false })
   userId: number;
 
-  @Column('timestamp', { nullable: false })
-  storyDate: Date;
-
   @Column('varchar', { nullable: false })
   place: string;
 

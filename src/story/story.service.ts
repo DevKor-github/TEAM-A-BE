@@ -41,17 +41,11 @@ export class StoryService {
   async getStories(userId: number): Promise<GetStoryResponseDto[]> {
     const stories = await this.storyRepository.getStories(userId);
     const results = stories
-      .sort((a, b) => {
-        const diff = b.storyDate.getTime() - a.storyDate.getTime();
-        if (diff === 0) {
-          return b.createdAt.getTime() - a.createdAt.getTime();
-        }
-        return diff;
-      })
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((story) => {
         const result = {
           id: story.id,
-          storyDate: story.storyDate,
+          date: story.createdAt,
           imgDir:
             'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
           isPin: story.isPin ? true : false,
@@ -70,7 +64,7 @@ export class StoryService {
     const story = await this.storyRepository.toggleStoryPin(userId, storyId);
     const result = {
       id: story.id,
-      storyDate: story.storyDate,
+      date: story.createdAt,
       imgDir: 'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
       isPin: story.isPin ? true : false,
     };

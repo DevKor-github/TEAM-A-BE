@@ -3,7 +3,7 @@ export class GetStoryResponseDto {
 
   imgDir: string;
 
-  storyDate: Date;
+  date: Date;
 
   isPin: boolean;
 }

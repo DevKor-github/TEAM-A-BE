@@ -1,10 +1,6 @@
-import { IsBoolean, IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateStoryRequestDto {
-  @IsNotEmpty()
-  @IsDate()
-  storyDate: Date;
-
   @IsNotEmpty()
   @IsString()
   place: string;
