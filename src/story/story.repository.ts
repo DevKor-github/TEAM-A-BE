@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { StoryEntity } from 'src/entities/story.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Between, DataSource, In, Repository } from 'typeorm';
 import { CreateStoryDto } from './dto/create-story.dto';
 
 @Injectable()
@@ -48,5 +48,23 @@ export class StoryRepository extends Repository<StoryEntity> {
       userId: userId,
     });
     return deleteResult.affected ? true : false;
+  }
+
+  async getFeed(friendIds: number[]): Promise<StoryEntity[]> {
+    const today = new Date();
+    today.setHours(today.getHours() + 9);
+    const beforeOneDay = new Date();
+    beforeOneDay.setHours(beforeOneDay.getHours() - 15);
+    const stories = await this.find({
+      where: [
+        { userId: In(friendIds), isPin: true },
+        {
+          userId: In(friendIds),
+          createdAt: Between(beforeOneDay, today),
+        },
+      ],
+    });
+
+    return stories;
   }
 }

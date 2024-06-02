@@ -11,12 +11,14 @@ import {
 import { FileService } from 'src/common/file.service';
 import { GetStoryResponseDto } from './dto/get-story.dto';
 import { DeleteStoryResponseDto } from './dto/delete-story.dto';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Injectable()
 export class StoryService {
   constructor(
     private readonly storyRepository: StoryRepository,
     private readonly fileService: FileService,
+    private readonly friendshipService: FriendshipService,
   ) {}
 
   async createStory(
@@ -104,5 +106,26 @@ export class StoryService {
     }
 
     return new DeleteStoryResponseDto(true);
+  }
+
+  async getFeed(userId: number): Promise<GetStoryResponseDto[]> {
+    const friendIds = (await this.friendshipService.getFriendList(userId)).map(
+      (friend) => friend.userId,
+    );
+    const stories = await this.storyRepository.getFeed(friendIds);
+    const results = stories
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .map((story) => {
+        const result = {
+          id: story.id,
+          date: story.createdAt,
+          imgDir:
+            'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
+          isPin: story.isPin ? true : false,
+        };
+        return result;
+      });
+
+    return results;
   }
 }

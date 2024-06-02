@@ -67,4 +67,12 @@ export class StoryController {
   ): Promise<DeleteStoryResponseDto> {
     return await this.storyService.deleteStory(user.id, storyId);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/feed')
+  async getFeed(
+    @User() user: AuthorizedUserDto,
+  ): Promise<GetStoryResponseDto[]> {
+    return await this.storyService.getFeed(user.id);
+  }
 }

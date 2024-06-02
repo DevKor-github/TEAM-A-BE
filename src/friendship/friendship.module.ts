@@ -10,5 +10,6 @@ import { UserModule } from 'src/user/user.module';
   imports: [TypeOrmModule.forFeature([FriendshipEntity]), UserModule],
   controllers: [FriendshipController],
   providers: [FriendshipService, FriendshipRepository],
+  exports: [FriendshipService],
 })
 export class FriendshipModule {}
