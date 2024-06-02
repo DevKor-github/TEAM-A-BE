@@ -12,6 +12,7 @@ import { FileService } from 'src/common/file.service';
 import { GetStoryResponseDto } from './dto/get-story.dto';
 import { DeleteStoryResponseDto } from './dto/delete-story.dto';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { GetFeedResponseDto } from './dto/get-feed.dto';
 
 @Injectable()
 export class StoryService {
@@ -108,7 +109,7 @@ export class StoryService {
     return new DeleteStoryResponseDto(true);
   }
 
-  async getFeed(userId: number): Promise<GetStoryResponseDto[]> {
+  async getFeed(userId: number): Promise<GetFeedResponseDto[]> {
     const friendIds = (await this.friendshipService.getFriendList(userId)).map(
       (friend) => friend.userId,
     );
@@ -122,6 +123,13 @@ export class StoryService {
           imgDir:
             'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
           isPin: story.isPin ? true : false,
+          user: {
+            id: story.user.id,
+            username: story.user.username,
+            name: story.user.name,
+            homeUniversity: story.user.homeUniversity,
+            major: story.user.major,
+          },
         };
         return result;
       });

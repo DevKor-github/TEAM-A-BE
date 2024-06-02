@@ -22,6 +22,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { GetStoryResponseDto } from './dto/get-story.dto';
 import { DeleteStoryResponseDto } from './dto/delete-story.dto';
+import { GetFeedResponseDto } from './dto/get-feed.dto';
 
 @Controller('story')
 export class StoryController {
@@ -72,7 +73,7 @@ export class StoryController {
   @Get('/feed')
   async getFeed(
     @User() user: AuthorizedUserDto,
-  ): Promise<GetStoryResponseDto[]> {
+  ): Promise<GetFeedResponseDto[]> {
     return await this.storyService.getFeed(user.id);
   }
 }

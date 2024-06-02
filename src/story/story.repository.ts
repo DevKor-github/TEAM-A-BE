@@ -63,6 +63,7 @@ export class StoryRepository extends Repository<StoryEntity> {
           createdAt: Between(beforeOneDay, today),
         },
       ],
+      relations: ['user'],
     });
 
     return stories;
