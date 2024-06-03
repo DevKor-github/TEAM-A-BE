@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -47,8 +48,9 @@ export class StoryController {
   @Get()
   async getStories(
     @User() user: AuthorizedUserDto,
+    @Query('date') date?: string,
   ): Promise<GetStoryResponseDto[]> {
-    return await this.storyService.getStories(user.id);
+    return await this.storyService.getStories(user.id, date);
   }
 
   @UseGuards(JwtAuthGuard)

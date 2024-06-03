@@ -22,6 +22,24 @@ export class StoryRepository extends Repository<StoryEntity> {
     return stories;
   }
 
+  async getStorieswithDate(userId: number, date: Date): Promise<StoryEntity[]> {
+    const fromDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+    );
+    const toDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate() + 1,
+    );
+    const stories = await this.find({
+      where: { userId: userId, createdAt: Between(fromDate, toDate) },
+    });
+
+    return stories;
+  }
+
   async toggleStoryPin(userId: number, storyId: number): Promise<StoryEntity> {
     const story = await this.findOne({
       where: {

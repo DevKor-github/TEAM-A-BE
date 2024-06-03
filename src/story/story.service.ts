@@ -13,6 +13,7 @@ import { GetStoryResponseDto } from './dto/get-story.dto';
 import { DeleteStoryResponseDto } from './dto/delete-story.dto';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { GetFeedResponseDto } from './dto/get-feed.dto';
+import { StoryEntity } from 'src/entities/story.entity';
 
 @Injectable()
 export class StoryService {
@@ -63,8 +64,19 @@ export class StoryService {
     return new CreateStoryResponseDto(true);
   }
 
-  async getStories(userId: number): Promise<GetStoryResponseDto[]> {
-    const stories = await this.storyRepository.getStories(userId);
+  async getStories(
+    userId: number,
+    date?: string,
+  ): Promise<GetStoryResponseDto[]> {
+    let stories: StoryEntity[];
+    if (date) {
+      stories = await this.storyRepository.getStorieswithDate(
+        userId,
+        new Date(date),
+      );
+    } else {
+      stories = await this.storyRepository.getStories(userId);
+    }
     const results = stories
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((story) => {
