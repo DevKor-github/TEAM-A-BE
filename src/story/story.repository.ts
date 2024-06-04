@@ -40,6 +40,17 @@ export class StoryRepository extends Repository<StoryEntity> {
     return stories;
   }
 
+  async getPinnedStories(userId: number): Promise<StoryEntity[]> {
+    const stories = await this.find({
+      where: {
+        userId: userId,
+        isPin: true,
+      },
+    });
+
+    return stories;
+  }
+
   async toggleStoryPin(userId: number, storyId: number): Promise<StoryEntity> {
     const story = await this.findOne({
       where: {

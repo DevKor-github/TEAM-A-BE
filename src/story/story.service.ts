@@ -14,6 +14,8 @@ import { DeleteStoryResponseDto } from './dto/delete-story.dto';
 import { FriendshipService } from 'src/friendship/friendship.service';
 import { GetFeedResponseDto } from './dto/get-feed.dto';
 import { StoryEntity } from 'src/entities/story.entity';
+import { UserService } from 'src/user/user.service';
+import { GetFriendStoriesResponseDto } from './dto/get-friend-stories.dto';
 
 @Injectable()
 export class StoryService {
@@ -21,6 +23,7 @@ export class StoryService {
     private readonly storyRepository: StoryRepository,
     private readonly fileService: FileService,
     private readonly friendshipService: FriendshipService,
+    private readonly userService: UserService,
   ) {}
 
   async createStory(
@@ -140,6 +143,43 @@ export class StoryService {
         return result;
       });
 
+    return results;
+  }
+
+  async getFriendStories(
+    userId: number,
+    friendId: number,
+  ): Promise<GetFriendStoriesResponseDto> {
+    const friendIds = (await this.friendshipService.getFriendList(userId)).map(
+      (friend) => Number(friend.userId),
+    );
+    if (!friendIds.includes(friendId)) {
+      throw new BadRequestException('No friendship!');
+    }
+    const stories = await this.storyRepository.getPinnedStories(friendId);
+    const user = await this.userService.findUserById(friendId);
+    const results = {
+      user: {
+        id: user.id,
+        name: user.name,
+        username: user.username,
+        language: user.language,
+        country: user.country,
+        homeUniversity: user.homeUniversity,
+        major: user.major,
+      },
+      stories: stories.map((story) => {
+        const result = {
+          id: story.id,
+          date: story.createdAt,
+          imgDir:
+            'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
+          isPin: story.isPin,
+        };
+
+        return result;
+      }),
+    };
     return results;
   }
 }
