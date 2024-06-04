@@ -152,7 +152,9 @@ export class StoryService {
         homeUniversity: user.homeUniversity,
         major: user.major,
       },
-      stories: stories.map((story) => new GetStoryResponseDto(story)),
+      stories: stories
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+        .map((story) => new GetStoryResponseDto(story)),
     };
     return results;
   }
