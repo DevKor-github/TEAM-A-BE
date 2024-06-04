@@ -85,7 +85,7 @@ export class StoryService {
           date: story.createdAt,
           imgDir:
             'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-          isPin: story.isPin ? true : false,
+          isPin: story.isPin,
         };
 
         return result;
@@ -103,7 +103,7 @@ export class StoryService {
       id: story.id,
       date: story.createdAt,
       imgDir: 'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-      isPin: story.isPin ? true : false,
+      isPin: story.isPin,
     };
 
     return result;
@@ -134,7 +134,7 @@ export class StoryService {
           date: story.createdAt,
           imgDir:
             'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-          isPin: story.isPin ? true : false,
+          isPin: story.isPin,
           user: {
             id: story.user.id,
             username: story.user.username,

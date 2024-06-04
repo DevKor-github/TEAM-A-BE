@@ -25,10 +25,10 @@ export class StoryEntity extends CommonEntity {
   @Column('varchar', { nullable: false })
   imgDir: string;
 
-  @Column('tinyint', { default: false })
+  @Column('boolean', { default: false })
   isPin: boolean;
 
-  @Column('tinyint', { nullable: false })
+  @Column('boolean', { nullable: false })
   isPublic: boolean;
 
   @JoinColumn({ name: 'userId' })
