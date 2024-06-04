@@ -14,6 +14,11 @@ export class StoryRepository extends Repository<StoryEntity> {
     return await this.save(story);
   }
 
+  async findStoryById(storyId: number): Promise<StoryEntity> {
+    const story = this.findOne({ where: { id: storyId } });
+    return story;
+  }
+
   async getStories(userId: number): Promise<StoryEntity[]> {
     const stories = await this.find({
       where: { userId: userId },

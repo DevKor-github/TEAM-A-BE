@@ -95,6 +95,11 @@ export class StoryService {
     userId: number,
     storyId: number,
   ): Promise<DeleteStoryResponseDto> {
+    const story = await this.storyRepository.findStoryById(storyId);
+    if (story.userId !== userId) {
+      throw new BadRequestException('Not your story!');
+    }
+    await this.fileService.deleteFile(story.imgDir);
     const isDeleted = await this.storyRepository.deleteStory(userId, storyId);
     if (!isDeleted) {
       throw new NotImplementedException('Delete story failed!');
