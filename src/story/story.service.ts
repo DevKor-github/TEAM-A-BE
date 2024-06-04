@@ -31,15 +31,9 @@ export class StoryService {
     const today = new Date();
     today.setHours(today.getHours() + 9); //UTC -> 서울 시간
 
-    const todayStories = (await this.storyRepository.getStories(userId)).filter(
-      (story) => {
-        const storyDate = story.createdAt;
-        return (
-          storyDate.getFullYear() === today.getFullYear() &&
-          storyDate.getMonth() === today.getMonth() &&
-          storyDate.getDate() === today.getDate()
-        );
-      },
+    const todayStories = await this.storyRepository.getStorieswithDate(
+      userId,
+      today,
     );
 
     if (todayStories.length >= 3) {
