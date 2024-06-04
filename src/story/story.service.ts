@@ -76,17 +76,7 @@ export class StoryService {
     }
     const results = stories
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-      .map((story) => {
-        const result = {
-          id: story.id,
-          date: story.createdAt,
-          imgDir:
-            'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-          isPin: story.isPin,
-        };
-
-        return result;
-      });
+      .map((story) => new GetStoryResponseDto(story));
 
     return results;
   }
@@ -96,12 +86,7 @@ export class StoryService {
     storyId: number,
   ): Promise<GetStoryResponseDto> {
     const story = await this.storyRepository.toggleStoryPin(userId, storyId);
-    const result = {
-      id: story.id,
-      date: story.createdAt,
-      imgDir: 'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-      isPin: story.isPin,
-    };
+    const result = new GetStoryResponseDto(story);
 
     return result;
   }
@@ -126,19 +111,13 @@ export class StoryService {
     const results = stories
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .map((story) => {
-        const result = {
-          id: story.id,
-          date: story.createdAt,
-          imgDir:
-            'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-          isPin: story.isPin,
-          user: {
-            id: story.user.id,
-            username: story.user.username,
-            name: story.user.name,
-            homeUniversity: story.user.homeUniversity,
-            major: story.user.major,
-          },
+        const result = new GetFeedResponseDto(story);
+        result.user = {
+          id: story.user.id,
+          username: story.user.username,
+          name: story.user.name,
+          homeUniversity: story.user.homeUniversity,
+          major: story.user.major,
         };
         return result;
       });
@@ -168,17 +147,7 @@ export class StoryService {
         homeUniversity: user.homeUniversity,
         major: user.major,
       },
-      stories: stories.map((story) => {
-        const result = {
-          id: story.id,
-          date: story.createdAt,
-          imgDir:
-            'https://kukey.s3.ap-northeast-2.amazonaws.com/' + story.imgDir,
-          isPin: story.isPin,
-        };
-
-        return result;
-      }),
+      stories: stories.map((story) => new GetStoryResponseDto(story)),
     };
     return results;
   }
