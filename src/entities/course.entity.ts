@@ -1,9 +1,19 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommonEntity } from './common.entity';
 import { CourseDetailEntity } from './course-detail.entity';
 import { TimetableCourseEntity } from './timetable-course.entity';
 
 @Entity('course')
+@Index('ngram_index', ['courseName', 'professorName', 'courseCode'], {
+  fulltext: true,
+  parser: 'ngram',
+})
 export class CourseEntity extends CommonEntity {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;

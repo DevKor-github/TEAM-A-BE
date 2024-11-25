@@ -11,12 +11,29 @@ import { CourseDocs } from 'src/decorators/docs/course.decorator';
 import { GetGeneralCourseDto } from './dto/get-general-course.dto';
 import { GetMajorCourseDto } from './dto/get-major-course.dto';
 import { GetAcademicFoundationCourseDto } from './dto/get-academic-foundation-course.dto';
+import { CourseEntity } from 'src/entities/course.entity';
 
 @ApiTags('course')
 @CourseDocs
 @Controller('course')
 export class CourseController {
   constructor(private courseService: CourseService) {}
+
+  // test1 - LIKE 사용
+  @Get('get-all-course/:keyword')
+  async getAllCourse(
+    @Param('keyword') keyword: string,
+  ): Promise<CourseEntity[]> {
+    return await this.courseService.getAllCourse(keyword);
+  }
+
+  // test2 - full text search 사용
+  @Get('get-all-course-index/:keyword')
+  async getAllCourseIndex(
+    @Param('keyword') keyword: string,
+  ): Promise<CourseEntity[]> {
+    return await this.courseService.getAllCourseIndex(keyword);
+  }
 
   // 학수번호 검색
   @UseGuards(JwtAuthGuard)

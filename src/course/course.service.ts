@@ -21,6 +21,39 @@ export class CourseService {
     private courseDetailRepository: CourseDetailRepository,
   ) {}
 
+  // test 1
+  async getAllCourse(keyword): Promise<CourseEntity[]> {
+    const courses = await this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.courseDetails', 'courseDetails')
+      .where('course.courseName LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('course.professorName LIKE :keyword', {
+        keyword: `%${keyword}%`,
+      })
+      .orWhere('course.courseCode LIKE :keyword', { keyword: `%${keyword}%` })
+      .getMany();
+
+    console.log(courses.length);
+    return courses;
+  }
+
+  // test 2
+  async getAllCourseIndex(keyword): Promise<CourseEntity[]> {
+    const courses = await this.courseRepository
+      .createQueryBuilder('course')
+      .leftJoinAndSelect('course.courseDetails', 'courseDetails')
+      .where(
+        'MATCH(course.courseName, course.professorName, course.courseCode) AGAINST (:keyword IN BOOLEAN MODE)',
+        {
+          keyword,
+        },
+      )
+      .getMany();
+
+    console.log(courses.length);
+    return courses;
+  }
+
   async getCourse(courseId: number): Promise<CommonCourseResponseDto> {
     const course = await this.courseRepository.findOne({
       where: { id: courseId },

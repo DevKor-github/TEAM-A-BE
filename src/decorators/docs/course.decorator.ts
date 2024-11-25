@@ -14,6 +14,8 @@ import { ApiKukeyExceptionResponse } from '../api-kukey-exception-response';
 type CourseEndPoints = MethodNames<CourseController>;
 
 const CourseDocsMap: Record<CourseEndPoints, MethodDecorator[]> = {
+  getAllCourseIndex: [],
+  getAllCourse: [],
   searchCourseCode: [
     ApiBearerAuth('accessToken'),
     ApiOperation({
