@@ -25,6 +25,7 @@ import { AttendanceCheckModule } from './attendance-check/attendance-check.modul
 import { APP_FILTER } from '@nestjs/core';
 import { UnhandledExceptionFilter } from './common/filter/unhandled-exception.filter';
 import { KukeyExceptionFilter } from './common/filter/kukey-exception.filter';
+import { BannerModule } from './home/banner/banner.module';
 
 console.log(`.env.${process.env.NODE_ENV}`);
 
@@ -75,6 +76,7 @@ console.log(`.env.${process.env.NODE_ENV}`);
     CalendarModule,
     ReportModule,
     AttendanceCheckModule,
+    BannerModule,
   ],
   controllers: [AppController],
   providers: [

@@ -654,6 +654,31 @@ export const kukeyExceptions = createKukeyExceptions({
     errorCode: 5102,
     statusCode: 500,
   },
+  // - 52xx : Banner
+  BANNER_NOT_FOUND: {
+    name: 'BANNER_NOT_FOUND',
+    message: 'Banner not found.',
+    errorCode: 5200,
+    statusCode: 404,
+  },
+  BANNER_DELETE_FAILED: {
+    name: 'BANNER_DELETE_FAILED',
+    message: 'Banner delete failed.',
+    errorCode: 5201,
+    statusCode: 500,
+  },
+  BANNER_UPDATE_FAILED: {
+    name: 'BANNER_UPDATE_FAILED',
+    message: 'Banner update failed.',
+    errorCode: 5202,
+    statusCode: 500,
+  },
+  BANNER_IMAGE_REQUIRED: {
+    name: 'BANNER_IMAGE_REQUIRED',
+    message: 'Banner image required.',
+    errorCode: 5203,
+    statusCode: 400,
+  },
   // 6xxx : S3, File 관련 예외
   NOT_IMAGE_FILE: {
     name: 'NOT_IMAGE_FILE',
